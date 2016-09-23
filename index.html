@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+
+      <head>
+            <meta charset="UTF-8"/>
+            
+            <style>
+                  canvas {
+                        border: 2px solid;
+                        
+                  }
+
+                  input {
+                        background-color:#2dabf9;
+                        border-radius:3px;
+                        border:1px solid #0b0e07;
+                        display:inline-block;
+                        cursor:pointer;
+                        color:#ffffff;
+                        font-family:Arial;
+                        font-size:15px;
+                        padding:9px 23px;
+                        text-decoration:none;
+                        text-shadow:0px 1px 0px #263666;
+                        margin: 0px 0px 0px 320px;
+                  }
+            </style>
+      </head>
+      
+      <body>
+                               <p>0.5v Beta</p>
+                                <script>
+                                          var w = window;
+                                          requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
+
+                                          var keysDown =  new Array();
+                                          addEventListener("keydown", function (e) {keysDown[e.keyCode] = true;});
+                                          addEventListener("keyup", function (e) {delete keysDown[e.keyCode];});  
+
+                                          var canvas = document.createElement('canvas');
+                                          canvas.width = 700;
+                                          canvas.height = 500;
+                                          document.body.appendChild(canvas);
+                                          var ktx = canvas.getContext('2d');
+                                          ktx.fillStyle = "#C9C9C9";
+                                          ktx.fillRect(0, 0, 700, 900);
+
+
+                                          var play = false;
+                                          var butt = document.createElement('input');
+                                          var pb = document.createElement('p');
+                                          pb.appendChild(butt);
+                                          document.body.appendChild(pb);
+                                          butt.type = "button";
+                                          butt.value = "Start";
+                                          butt.onclick = function () {
+                                                if (this.value == "Start") {
+                                                      play = true;
+                                                      this.value = "Stop";   
+                                                }else if (this.value == "Stop") {
+                                                      play = false;
+                                                      this.value = "Start";
+                                                }
+
+                                          }
+
+                                          
+                                          var kulicka = {
+                                                      x: 22 + (Math.random() * (700)),
+                                                      y: 170,
+                                                      p: 10, 
+                                                      r: 6,
+                                                      i: 0,
+                                                      smrti: 0,
+                                                      smer: "",
+                                                      randSmer: function() {
+                                                      		var randNum = Math.random() * 10 + 1;
+                                                      		if (randNum <= 5) {
+                                                      			this.smer = "PD";
+                                                      		} else{
+                                                      			this.smer = "LD";
+                                                      		}
+                                                      		return;
+                                                      },
+
+                                                      pohyb: function () {
+                                                            if (this.smer == "LD") {
+                                                                  this.x -= this.r;
+                                                                  this.y += this.r;
+                                                            };
+                                                            if (this.smer == "LN") {
+                                                                  this.x -= this.r;
+                                                                  this.y -= this.r;
+                                                            };
+                                                            if (this.smer == "PD") {
+                                                                  this.x += this.r;
+                                                                  this.y += this.r;
+                                                            };
+                                                            if (this.smer == "PN") {
+                                                                  this.x += this.r;
+                                                                  this.y -= this.r;
+                                                            };
+
+                                                            if (this.x > 690) {
+                                                                  if (this.smer == "PD") {this.smer = "LD"};
+                                                                  if (this.smer == "PN") {this.smer = "LN"};
+                                                            };
+                                                            if (this.x < 10) {
+                                                                  if (this.smer == "LD") {this.smer = "PD"};
+                                                                  if (this.smer == "LN") {this.smer = "PN"};
+                                                            };
+                                                            if (this.y > 500) {
+                                                            	  this.smrti++;
+                                                                  this.x = 32 + (Math.random() * (700 - 3));
+                                                                  this.y = 170;
+                                                                  this.randSmer();
+                                                            };
+                                                            if (this.y < 10) {
+                                                                  if (this.smer == "PN") {this.smer = "PD"};
+                                                                  if (this.smer == "LN") {this.smer = "LD"};
+                                                            };
+
+                                                            if (hrac.x <= this.x && hrac.x + 120 >= this.x && this.y >= hrac.y - 11) {
+                                                                  this.y = 460; 
+                                                                  if (this.smer == "PD") {this.smer = "PN"};
+                                                                  if (this.smer == "LD") {this.smer = "LN"};
+                                                            };
+
+
+                                                      },
+                                                      vykresli: function () {
+                                                            ktx.beginPath();
+                                                            ktx.arc(this.x , this.y , this.p + 1, 0,Math.PI*2);
+                                                            ktx.closePath();
+                                                            ktx.fillStyle = "black";
+                                                            ktx.fill();
+
+                                                            ktx.beginPath();
+                                                            ktx.arc(this.x, this.y, this.p, 0,Math.PI*2);
+                                                            ktx.closePath();
+                                                            ktx.fillStyle = "#EDC11C";
+                                                            ktx.fill();
+                                                           
+                                                            return;
+                                                      }
+                                          };
+                                          kulicka.randSmer();
+
+                                          var hrac = {
+                                                      x: 1,
+                                                      y: 480,
+                                                      r: 8,
+                                                      pohyb: function () {
+                                                            if (37 in keysDown) {this.x -= this.r;};
+                                                            if (39 in keysDown) {this.x += this.r;};
+                                                            if (this.x > 559) {this.x = 559;};
+                                                            if (this.x < 1) {this.x = 1;};
+                                                            return;
+                                                      },
+                                                      vykresli: function () {
+                                                            ktx.fillStyle = "black";
+                                                            ktx.fillRect(this.x, this.y, 140, 15);
+                                                            return;
+                                                      }
+                                          };
+
+                                          var Blok = function(x, y) {
+                                                      this.x = x;
+                                                      this.y = y;
+                                                      this.zniceny = false,
+                                                      
+                                                      this.vykresli = function () {
+                                                            if (!this.zniceny) {
+                                                                  ktx.fillStyle = "black";
+                                                                  ktx.fillRect(this.x, this.y, 82, 22);
+                                                                  ktx.fillStyle = "green";
+                                                                  ktx.fillRect(this.x, this.y, 80, 20);
+                                                            }
+                                                            
+                                                            return;
+                                                      }
+                                                      this.kolize = function () {
+
+		                                                        if (!this.zniceny) {
+		                                                            	if (kulicka.smer == "PN" || kulicka.smer == "LN")
+		                                                            	{
+				                                                            if (kulicka.y < this.y + 30 && kulicka.y - 2 > this.y && kulicka.x < this.x + 102 && kulicka.x > this.x - 22) {
+				                                                            		if (kulicka.smer == "LN") {
+					                                                                    kulicka.smer = "LD";
+					                                                                              
+					                                                                }else if (kulicka.smer == "PN") {
+					                                                                    kulicka.smer = "PD";
+					                                                                        	
+					                                                                }
+				                                                            		this.zniceny = true;
+				                                                            		zniceneBloky--;
+				                                                            		return;
+				                                                            }
+		                                                            	}
+		                                                            	else if (kulicka.smer == "PD" || kulicka.smer == "LD") 
+		                                                            	{
+				                                                            if (kulicka.y < this.y - 2 && kulicka.y > this.y - 20 && kulicka.x < this.x + 102 && kulicka.x > this.x - 22) {
+				                                                            		if (kulicka.smer == "LD") {
+					                                                                    kulicka.smer = "LN";
+					                                                                              
+					                                                                }else if (kulicka.smer == "PD") {
+					                                                                    kulicka.smer = "PN";  	
+					                                                                }
+					                                                                this.zniceny = true;
+					                                                                zniceneBloky--;
+					                                                                 return;
+					                                                        }
+		                                                            	}
+		                                                                 
+	                                                            }
+	                                                            return;
+                                                      }
+
+                                          };
+                                         
+                                          var bloky = new Array();
+                                          bloky[0] = new Blok(60,  20);
+                                          bloky[1] = new Blok(180, 20);
+                                          bloky[2] = new Blok(300, 20);
+                                          bloky[3] = new Blok(420, 20);
+                                          bloky[4] = new Blok(540, 20);
+
+                                          bloky[5] = new Blok(120, 70);
+                                          bloky[6] = new Blok(240, 70);
+                                          bloky[7] = new Blok(360, 70);
+                                          bloky[8] = new Blok(480, 70);
+
+                                          bloky[9] = new Blok(180, 120);
+                                          bloky[10] = new Blok(300, 120);
+                                          bloky[11] = new Blok(420,120);
+
+                                          bloky[12] = new Blok(240, 170);
+                                          bloky[13] = new Blok(360, 170);
+
+                                          bloky[14] = new Blok(300, 220);
+                                          var zniceneBloky = bloky.length;
+
+                                          function vykresliBloky() { 
+                                                for (var i = 0; i < bloky.length; i++) {
+                                                            bloky[i].vykresli();     
+                                                };
+                                                return;
+                                          }
+                                          
+                                          
+                                          function kolizeBloku() {
+                                                for (var iBloku = 0; iBloku < bloky.length; iBloku++) {
+                                                      bloky[iBloku].kolize();
+                                                };
+                                                return;
+                                          }
+
+                                         
+                                          function main() {
+                                          	
+                                                      if (play) {
+                                                            vykresli();
+                                                            pohyb();
+                                                            
+                                                      }
+                                                      if (zniceneBloky == 0) {play = false; ktx.font = "50px Arial";ktx.fillStyle = "black"; ktx.fillText("Winner "+kulicka.smrti+"-smrti", 200, 250);};      
+                                                      requestAnimationFrame(main);       
+                                          }
+
+                                          function pohyb() {
+                                                      kulicka.pohyb();
+                                                      kolizeBloku();
+                                                      hrac.pohyb();
+                                                      return;
+                                          }
+                                          
+                                          function vykresli() {
+                                                      ktx.fillStyle = "#C9C9C9";
+                                                      ktx.fillRect(0, 0, 700, 500);
+
+                                                      
+                                                      kulicka.vykresli();
+                                                     
+                                                      hrac.vykresli(); 
+                                                      vykresliBloky();
+                                                      
+
+                                                      return;
+                                          }
+                                          
+                                          main();
+
+                                </script>
+      </body>
+  
+  
+</html>
